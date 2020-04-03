@@ -1,0 +1,5 @@
+[wapt]
+name=WAPT Server Repo
+baseurl=https://wapt.tranquil.it/centos7/wapt-1.8/
+enabled=1
+gpgcheck=1

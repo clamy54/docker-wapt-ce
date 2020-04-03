@@ -1,0 +1,66 @@
+--- postconf.py.orig	2020-04-03 14:27:36.343939995 +0200
++++ postconf.py	2020-03-31 15:04:27.454355061 +0200
+@@ -61,6 +61,7 @@
+ from waptserver.config import type_debian,type_redhat
+ from waptserver.model import init_db,upgrade_db_structure,load_db_config
+ from waptcrypto import SSLCertificate,SSLPrivateKey,SSLCRL
++from os import environ
+ 
+ def run(*args, **kwargs):
+     return subprocess.check_output(*args, shell=True, **kwargs)
+@@ -453,9 +454,15 @@
+     else:
+         wapt_password = ''
+         if not server_config['wapt_password']:
+-            print('[*] Generating random password for WAPT server')
+-            wapt_password = pwd.genword(entropy=56, charset="ascii_62")
+-            print('[*] WAPT admin password : %s' % wapt_password)
++            if environ.get('WAPT_ADMIN_PASSWORD') is not None:
++                if environ.get('WAPT_ADMIN_PASSWORD') == '*':
++                    wapt_password = pwd.genword(entropy=56, charset="ascii_62")
++                else:
++                    wapt_password = os.environ['WAPT_ADMIN_PASSWORD']
++            else:
++                print('[*] Setting default WAPT Admin password to : password')
++                wapt_password = 'password'
++            	print('[*] WAPT admin password : %s' % wapt_password)
+             password = pbkdf2_sha256.hash(wapt_password.encode('utf8'))
+             server_config['wapt_password'] = password
+ 
+@@ -484,10 +491,15 @@
+             server_config['allow_unauthenticated_registration'] = False
+             server_config['use_kerberos'] = False
+     else:
+-        print('[*] Set default registration method to : Allow anyone to register + Kerberos disabled')
+         server_config['allow_unauthenticated_registration'] = True
+         server_config['use_kerberos'] = False
+-
++        if environ.get('WAPT_AGENT_AUTHENTICATION') is not None:
++            if environ.get('WAPT_AGENT_AUTHENTICATION').lower() == 'kerberos':
++                server_config['allow_unauthenticated_registration'] = False
++                server_config['use_kerberos'] = True
++            if environ.get('WAPT_AGENT_AUTHENTICATION').lower() == 'strong':
++                server_config['allow_unauthenticated_registration'] = False
++                server_config['use_kerberos'] = False
+ 
+     # Guess fqdn using socket
+     fqdn = guess_fqdn()
+@@ -552,7 +564,7 @@
+             make_httpd_config('/opt/wapt/waptserver', fqdn, options.force_https,server_config)
+             enable_nginx()
+             restart_nginx()
+-            setup_firewall()
++            # setup_firewall()
+         except subprocess.CalledProcessError as cpe:
+             final_msg += [
+                 'Error while trying to configure Nginx!',
+@@ -690,7 +702,8 @@
+         postconf.msgbox('\n'.join(final_msg), height=height, width=width)
+     else:
+         if wapt_password:
+-            final_msg.append('[*] WAPT admin password : %s\n' % wapt_password)
++            if environ.get('WAPT_ADMIN_PASSWORD') == '*':
++                final_msg.append('[*] WAPT admin password : %s\n' % wapt_password)
+         for line in final_msg:
+             print(line)
+ 
