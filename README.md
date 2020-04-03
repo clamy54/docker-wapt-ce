@@ -18,6 +18,7 @@ docker run --hostname wapt.myhostname.com -p 80:80 -p 443:443 -e WAPT_ADMIN_PASS
 
 Replace wapt.myhostname.com with the FQDN that wapt clients will use to join the wapt server (you can use your docker host fqdn or a cname pointing to it).
 As this build relies on systemd, don't forget to put  `--privileged=true -v /sys/fs/cgroup:/sys/fs/cgroup:ro` in the command line.
+The first run may takes some time because the post-install script generates DH parameters.
 
  ## Environment Variables
 

@@ -11,7 +11,7 @@ if [ ! -e $FIRSTRUN ]; then
     systemctl enable postgresql-9.6 && systemctl start postgresql-9.6
     systemctl enable waptserver
     systemctl enable nginx
-    /opt/wapt/waptserver/scripts/postconf.sh --quiet  && touch $FIRSTRUN
+    /opt/wapt/waptserver/scripts/postconf.sh --quiet  && echo `grep __version__ /opt/wapt/waptserver/config.py | awk -F "=" '{print $2}' | awk -F "\"" '{print $2}'` > $FIRSTRUN
     systemctl is-active --quiet waptserver && systemctl restart waptserver || systemctl start waptserver 
     systemctl is-active --quiet nginx && systemctl restart nginx || systemctl start nginx 
 fi

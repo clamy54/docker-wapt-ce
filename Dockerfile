@@ -17,7 +17,7 @@ rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
 rm -f /lib/systemd/system/basic.target.wants/*;\
 rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ "/sys/fs/cgroup" ]
-RUN yum update --assumeyes --skip-broken && yum install --assumeyes epel-release wget patch sudo && yum clean all
+RUN yum update --assumeyes --skip-broken && yum install --assumeyes epel-release wget patch sudo grep gawk && yum clean all
 COPY files/wapt.repo /etc/yum.repos.d/wapt.repo
 COPY files/run_wapt.sh /app/run_wapt.sh
 COPY files/postconf.patch /app/postconf.patch
