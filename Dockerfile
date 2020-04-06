@@ -25,7 +25,7 @@ COPY files/configure_wapt.sh /app/configure_wapt.sh
 RUN chmod +x /app/run_wapt.sh
 RUN chmod +x /app/configure_wapt.sh
 RUN wget -q -O /tmp/tranquil_it.gpg "https://wapt.tranquil.it/centos7/RPM-GPG-KEY-TISWAPT-7" && rpm --import /tmp/tranquil_it.gpg
-RUN yum update --assumeyes --skip-broken && yum install --assumeyes postgresql96-server postgresql96-contrib tis-waptserver tis-waptsetup cabextract util-linux less sed && yum clean all
+RUN yum update --assumeyes --skip-broken && yum install --assumeyes postgresql96-server postgresql96-contrib tis-waptserver tis-waptsetup cabextract util-linux less sed krb5-workstation msktutil nginx-mod-http-auth-spnego && yum clean all
 RUN patch -p0 /opt/wapt/waptserver/scripts/postconf.py < /app/postconf.patch
 VOLUME /var/lib/pgsql/9.6
 VOLUME /var/www/html
