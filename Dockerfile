@@ -31,6 +31,7 @@ VOLUME /var/lib/pgsql/9.6
 VOLUME /var/www/html
 VOLUME /etc/nginx
 VOLUME /opt/wapt/conf
+VOLUME /opt/wapt/waptserver/ssl
 RUN systemctl enable postgresql-9.6 
-EXPOSE 80 443
+EXPOSE 80 443 8080
 CMD ["/app/run_wapt.sh"]

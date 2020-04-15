@@ -13,7 +13,7 @@ This build is based on centos7 and wapt community edition.
 ## How to run
 
 ```shell
-docker run --hostname wapt.myhostname.com -p 80:80 -p 443:443 -e WAPT_ADMIN_PASSWORD='adminpassword'  --privileged=true -v /sys/fs/cgroup:/sys/fs/cgroup:ro -d clamy54/wapt-ce:1.8.1
+docker run --hostname wapt.myhostname.com -p 80:80 -p 443:443 -e WAPT_ADMIN_PASSWORD='adminpassword'  --privileged=true -v /sys/fs/cgroup:/sys/fs/cgroup:ro -d clamy54/wapt-ce:tag
 ```
 
 Replace wapt.myhostname.com with the FQDN that wapt clients will use to join the wapt server (you can use your docker host fqdn or a cname pointing to it).
@@ -24,8 +24,9 @@ The first run may takes some time because the post-install script generates DH p
  ## Environment Variables
 
 * `WAPT_ADMIN_PASSWORD` - Wapt administrator password. If not set, admin default password is set to *password* . If set to \*, a random password wil be generated. To view the generated password, use the *docker container logs \<container_name\>* command.
-* `WAPT_AGENT_AUTHENTICATION'` -  If not set, allow unauthenticated registration of clients ( same behavior as WAPT 1.3 ). If set to *kerberos*, kerberos authentication isrequired for machines registration. If set to *strong*,  Kerberos is disabled but registration require strong authentication.
-
+* `WAPT_AGENT_AUTHENTICATION` -  If not set, allow unauthenticated registration of clients ( same behavior as WAPT 1.3 ). If set to *kerberos*, kerberos authentication isrequired for machines registration. If set to *strong*,  Kerberos is disabled but registration require strong authentication.
+* `DISABLE_NGINX` (only in latest build) - If set to 1, nginx is disabled in the container. You can configure your own nginx in another container or on host directly. SSL certificates can be found in the /opt/wapt/waptserver/ssl volume. If you install nginx directly on the host, then it can access multiple wapt container instances by using server_name based vhosts.
+* `WAPTSERVER_PORT` (only in latest build) - If set, change waptserver process listening port (default : 8080). Must be a tcp port > 1024.
 
  ##  Volumes
 To persist data, theses volumes are exposed and can be mounted to the local filesystem by adding -v option in the command line :
@@ -34,5 +35,6 @@ To persist data, theses volumes are exposed and can be mounted to the local file
 * `/opt/wapt/conf` - Wapt config files & certificates
 * `/etc/nginx` - Nginx configuration
 * `/var/www/html` - Wapt files & repository
+* `/opt/wapt/waptserver/ssl` - SSL certificates used by nginx (if you need them for external nginx)
 
  
