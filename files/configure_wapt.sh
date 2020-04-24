@@ -59,5 +59,6 @@ then
     elif [ "$DISABLE_NGINX" == "1" ]
     then
         systemctl is-active --quiet nginx &&  systemctl stop nginx && systemctl disable nginx
+        sed -i "s/127.0.0.1/0.0.0.0/g" /opt/wapt/waptserver/server.py
     fi 
 fi
