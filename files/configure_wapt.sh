@@ -9,6 +9,26 @@ then
     fi
     done
     sleep 5
+    if [ -z "$(ls -A /var/lib/pgsql/9.6)" ]; then
+      echo "Populating /var/lib/pgsql/9.6" 
+      rsync -a /var/lib/pgsql/9.6.orig/ /var/lib/pgsql/9.6
+    fi
+    if [ -z "$(ls -A /opt/wapt/conf)" ]; then
+      echo "Populating /opt/wapt/conf"
+      rsync -a /opt/wapt/conf.orig/ /opt/wapt/conf
+    fi
+    if [ -z "$(ls -A /etc/nginx)" ]; then
+      echo "Populating /etc/nginx"
+      rsync -a /etc/nginx.orig/ /etc/nginx
+    fi
+    if [ -z "$(ls -A /var/www/html)" ]; then
+      echo "Populating /var/www/html"
+      rsync -a /var/www/html.orig/ /var/www/html
+    fi
+    if [ -z "$(ls -A /opt/wapt/waptserver/ssl)" ]; then
+      rsync -a /opt/wapt/waptserver/ssl.orig/ /opt/wapt/waptserver/ssl
+    fi
+    echo "Initializing Postgres database :"
     export PGSETUP_INITDB_OPTIONS="-E UTF8" && /usr/pgsql-9.6/bin/postgresql96-setup initdb 
     systemctl enable postgresql-9.6 && systemctl start postgresql-9.6
     systemctl enable waptserver
@@ -16,6 +36,7 @@ then
     then 
          systemctl enable nginx
     fi
+    echo "Running Wapt configuration :"
     /opt/wapt/waptserver/scripts/postconf.sh --quiet  && echo `grep __version__ /opt/wapt/waptserver/config.py | awk -F "=" '{print $2}' | awk -F "\"" '{print $2}'` > $FIRSTRUN
     if [[ -n "$WAPTSERVER_PORT" ]]
     then
