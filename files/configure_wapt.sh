@@ -37,7 +37,8 @@ then
          systemctl enable nginx
     fi
     echo "Running Wapt configuration :"
-    /opt/wapt/waptserver/scripts/postconf.sh --quiet  && echo `grep __version__ /opt/wapt/waptserver/config.py | awk -F "=" '{print $2}' | awk -F "\"" '{print $2}'` > $FIRSTRUN
+    /opt/wapt/waptserver/scripts/postconf.sh --quiet  && echo `grep __version__ /opt/wapt/waptserver/config.py | awk -F "=" '{print $2}' | awk -F "\"" '{print $2}'` > $FIRSTRUN 
+    cp /etc/ssl/certs/dhparam.pem /opt/wapt/waptserver/ssl/
     if [[ -n "$WAPTSERVER_PORT" ]]
     then
         regexpnumbers='^[0-9]+$'
