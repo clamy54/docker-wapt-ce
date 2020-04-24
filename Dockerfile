@@ -6,6 +6,7 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 RUN mkdir /app
 WORKDIR /app
+RUN groupadd -g 8080 nginx && useradd -d /var/lib/nginx -g nginx -G nginx -u 8080 -s /sbin/nologin -m nginx && passwd -l nginx
 RUN yum  --assumeyes update; yum clean all
 RUN yum -y install systemd; yum clean all; \
 (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
