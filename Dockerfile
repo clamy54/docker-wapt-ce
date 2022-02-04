@@ -27,6 +27,8 @@ RUN chmod +x /app/run_wapt.sh
 RUN chmod +x /app/configure_wapt.sh
 RUN wget -q -O /tmp/tranquil_it.gpg "https://wapt.tranquil.it/centos7/RPM-GPG-KEY-TISWAPT-7" && rpm --import /tmp/tranquil_it.gpg
 RUN yum update --assumeyes --skip-broken && yum install --assumeyes postgresql96-server postgresql96-contrib tis-waptserver tis-waptsetup cabextract util-linux less sed rsync krb5-workstation msktutil nginx-mod-http-auth-spnego && yum clean all
+COPY files/nginx-mod-http-auth-spnego-1.20.1-1.el7.x86_64.rpm /app/nginx-mod-http-auth-spnego-1.20.1-1.el7.x86_64.rpm
+RUN rpm -Uvh --oldpackage /app/nginx-mod-http-auth-spnego-1.20.1-1.el7.x86_64.rpm && rm -f /app/nginx-mod-http-auth-spnego-1.20.1-1.el7.x86_64.rpm 
 RUN patch -p0 /opt/wapt/waptserver/scripts/postconf.py < /app/postconf.patch
 RUN mv /var/lib/pgsql/9.6 /var/lib/pgsql/9.6.orig && mv /var/www/html /var/www/html.orig && mv /etc/nginx /etc/nginx.orig && mv /opt/wapt/conf /opt/wapt/conf.orig && mv /opt/wapt/waptserver/ssl /opt/wapt/waptserver/ssl.orig
 RUN mkdir -p /var/lib/pgsql/9.6 /var/www/html /etc/nginx /opt/wapt/conf /opt/wapt/waptserver/ssl && chown wapt:root /opt/wapt/conf && chown postgres:postgres /var/lib/pgsql/9.6 && chmod 700 /var/lib/pgsql/9.6
